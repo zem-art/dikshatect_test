@@ -1,1 +1,4 @@
 node_modules/
+*/database.sqlite
+/api/database.sqlite
+database.sqlite
