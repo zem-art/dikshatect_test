@@ -15,6 +15,11 @@ Order.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    order_id : {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
     customerName: {
       type: DataTypes.STRING,
       allowNull: false,

@@ -5,21 +5,39 @@ export async function seedDatabase() {
   try {
 
     await Product.bulkCreate([
-      { name: "Product A", price: 100 },
-      { name: "Product B", price: 200 },
-      { name: "Product C", price: 300 },
+      { name: "product A", price: 100 },
+      { name: "product B", price: 200 },
+      { name: "product C", price: 300 },
     ]);
 
     await Order.bulkCreate([
       {
-        customerName: "John Doe",
+        customerName: "Kasep",
         orderDate: new Date(),
-        productIds: [1, 2],
+        products: [
+          {
+            id : 1,
+            quantity : 2
+          },
+          {
+            id : 2,
+            quantity : 1
+          }
+        ],
       },
       {
-        customerName: "Jane Smith",
+        customerName: "Ucups",
         orderDate: new Date(),
-        productIds: [2, 3],
+        products: [
+          {
+            id : 1,
+            quantity : 2
+          },
+          {
+            id : 3,
+            quantity : 1
+          }
+        ],
       },
     ]);
 

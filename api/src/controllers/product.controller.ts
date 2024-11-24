@@ -7,9 +7,21 @@ export const getProducts = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async(req: Request, res: Response) => {
-  const { uid } = req.body
+  const { name, price,  } = req.body
+
+  if(!name || !price){
+    res.status(400).json({message : "sorry incomplete argument"})
+    return
+  }
+
+  const product = await Product.create({
+    name,
+    price,
+  });
+
   res.json({
     status_code : 200,
-    message: 'successfully create product'
+    message: 'successfully create product',
+    data: product,
   })
 }
