@@ -7,14 +7,37 @@ import Product from "../models/product.model";
 
 
 export const getOrders = async (req: Request, res: Response) => {
-  const { customerName, orderDate } = req.query;
+  const { customerName, orderDate, limit="10", page="1" } = req.query;
   const where: any = {};
 
   if (customerName) where.customerName = customerName;
   if (orderDate) where.orderDate = new Date(orderDate as string);
+  
+  const offset = (Number(page) - 1) * Number(limit);
 
-  const orders = await Order.findAll({ where });
-  res.json(orders);
+  const  { count, rows: orders } = await Order.findAndCountAll({
+    where,
+    limit: Number(limit),
+    offset,
+    // include: [{
+    //   model: orderProduct,
+    //   attributes: ["id", "name", "price", "order_id"],
+    //   through: {
+    //     attributes: ['order_id', 'order_id']
+    //   }
+    // },],
+  })  
+
+  res.status(200).json({
+    status_code: 200,
+    message: "Orders retrieved successfully",
+    data: orders,
+    meta: {
+      total: count,
+      current_page: Number(page),
+      total_pages: Math.ceil(count / Number(limit)),
+    },
+  });
 };
 
 export const createOrder = async (req: Request, res: Response) => {
@@ -22,9 +45,8 @@ export const createOrder = async (req: Request, res: Response) => {
 
   try {
     let { customerName, products } = req.body;
-    const productIds = products.map((val:any) => val.id)
-
-    const order_id = generateRandomString(10)
+    const productIds = products.map((val:any) => val.id);
+    const order_id = generateRandomString(10);
 
     const order = await Order.create({
       order_id,
@@ -69,18 +91,40 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const getOrder = async (req: Request, res: Response) => {
   try {
-    const { order_id } = req.body
+    const { order_id } = req.query;
+    const where:any = {};
 
-    const findOrder = await Order.findOne({
-      where : order_id
-    })
+    if(order_id) where.order_id = order_id;
 
-    console.log(findOrder);
+    const findOrder = await Order.findOne({ where });
+    if(!findOrder?.get('order_id')){
+      res.status(404).json({
+        status_code : 404,
+        message: "Some Order not found"
+      });
+      return
+    };
+
+    const findOrderProduct = await orderProduct.findAll({ where });
+
+    const products = findOrderProduct.map(( products ) => {
+      const { name, price, quantity } = products.dataValues; 
+      const totalPrice = Number(quantity) * Number(price);
+      return {
+        name,
+        price,
+        quantity,
+        total_price: totalPrice,
+      }
+    });
 
     res.status(200).json({
       status_code : 200,
       message: 'successfully create orders',
-      // data: findOrder,
+      data: {
+        order : findOrder,
+        products,
+      },
     });
   } catch (error) {
     console.error(error);

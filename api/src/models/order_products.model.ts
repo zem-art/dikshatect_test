@@ -9,7 +9,7 @@ class OrderProduct extends Model {
     price!: string;
 }
 
-export default OrderProduct.init(
+OrderProduct.init(
     {
         id : {
             type : DataTypes.INTEGER,
@@ -44,3 +44,5 @@ export default OrderProduct.init(
         tableName: "order_products",
     }
 )
+
+export default OrderProduct;
