@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/migrations";
+import OrderProduct from "./order_products.model";
 
 class Product extends Model {
     public!: number;
@@ -7,7 +8,7 @@ class Product extends Model {
     price!: string;
 }
 
-export default Product.init(
+Product.init(
     {
         id : {
             type : DataTypes.INTEGER,
@@ -28,3 +29,5 @@ export default Product.init(
         tableName: "products",
     }
 )
+
+export default Product

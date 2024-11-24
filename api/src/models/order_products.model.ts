@@ -1,12 +1,14 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/migrations";
-import Order from "./order.model";
 import Product from "./product.model";
 
 class OrderProduct extends Model {
-    public!: number;
-    name!: string;
-    price!: string;
+    public id!: number;
+    public name!: string;
+    public price!: number;
+    public quantity!: number;
+    public order_id!: string;
+    public product_id!: number;
 }
 
 OrderProduct.init(
@@ -31,12 +33,12 @@ OrderProduct.init(
         order_id: {
             type: DataTypes.STRING,
             allowNull: false,
-            references: { model: Order, key: "order_id" },
+            references: { model: 'orders', key: "order_id" },
         },
         product_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            references: { model: Product, key: "id" },
+            references: { model: 'products', key: "id" },
         }
     },
     {

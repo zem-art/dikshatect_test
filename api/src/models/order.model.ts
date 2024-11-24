@@ -6,6 +6,7 @@ class Order extends Model {
   public customerName!: string;
   public orderDate!: Date;
   public productIds!: number[];
+  public order_id!: string;
 }
 
 Order.init(

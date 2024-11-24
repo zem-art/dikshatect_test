@@ -5,7 +5,6 @@ import orderProduct from "../models/order_products.model";
 import sequelize from "../database/migrations";
 import Product from "../models/product.model";
 
-
 export const getOrders = async (req: Request, res: Response) => {
   const { customerName, orderDate, limit="10", page="1" } = req.query;
   const where: any = {};
@@ -16,16 +15,26 @@ export const getOrders = async (req: Request, res: Response) => {
   const offset = (Number(page) - 1) * Number(limit);
 
   const  { count, rows: orders } = await Order.findAndCountAll({
+    attributes: {
+      exclude: ['productIds'],
+    },
     where,
     limit: Number(limit),
     offset,
-    // include: [{
-    //   model: orderProduct,
-    //   attributes: ["id", "name", "price", "order_id"],
-    //   through: {
-    //     attributes: ['order_id', 'order_id']
-    //   }
-    // },],
+    include: [{
+      model: orderProduct,
+      as: 'orderProducts',
+      attributes: [
+        "id",
+        "name",
+        "price",
+        "quantity",
+        "product_id",
+        [sequelize.literal('price * quantity'), 'total_price'],
+      ],
+      required: false,
+    }],
+    distinct: true
   })  
 
   res.status(200).json({
@@ -85,6 +94,7 @@ export const createOrder = async (req: Request, res: Response) => {
       data: order,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -106,11 +116,14 @@ export const getOrder = async (req: Request, res: Response) => {
     };
 
     const findOrderProduct = await orderProduct.findAll({ where });
-
+    let totalPriceOrder:number = 0
     const products = findOrderProduct.map(( products ) => {
-      const { name, price, quantity } = products.dataValues; 
+      const { name, price, quantity, product_id, id } = products.dataValues; 
       const totalPrice = Number(quantity) * Number(price);
+      totalPriceOrder += totalPrice
       return {
+        id,
+        product_id,
         name,
         price,
         quantity,
@@ -122,7 +135,14 @@ export const getOrder = async (req: Request, res: Response) => {
       status_code : 200,
       message: 'successfully create orders',
       data: {
-        order : findOrder,
+        order : {
+          order_id: findOrder.get('order_id'),
+          customerName: findOrder.get('customerName'),
+          orderDate: findOrder.get('orderDate'),
+          createdAt: findOrder.get('createdAt'),
+          updatedAt: findOrder.get('updatedAt'),
+          total_price: totalPriceOrder
+        },
         products,
       },
     });
