@@ -4,12 +4,13 @@ import generateRandomString from "../utils/string.utils";
 import orderProduct from "../models/order_products.model";
 import sequelize from "../database/config";
 import Product from "../models/product.model";
+import { Op } from "sequelize";
 
 export const getOrders = async (req: Request, res: Response) => {
   const { customerName, orderDate, limit="10", page="1" } = req.query;
   const where: any = {};
 
-  if (customerName) where.customerName = customerName;
+  if (customerName) where.customerName = { [Op.like]: `%${customerName}%` };
   if (orderDate) where.orderDate = new Date(orderDate as string);
   
   const offset = (Number(page) - 1) * Number(limit);
