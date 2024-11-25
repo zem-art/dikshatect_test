@@ -18,7 +18,7 @@ app.use("/orders", orderRoutes);
 sequelize.sync({ force: true }).then(async () => {
   setupAssociations()
   console.log("Database connected");
-  // await seedDatabase();
+  await seedDatabase();
 });
 
 export default app;

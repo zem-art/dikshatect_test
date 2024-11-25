@@ -28,19 +28,19 @@ export async function seedDatabase() {
       {
         order_id: "8230250718",
         customerName: "kasep",
-        orderDate: new Date(),
+        orderDate: '2024-11-22T06:58:30.009Z',
         productIds: [1,2],
       },
       {
         order_id: "8263347506",
         customerName: "ucupss",
-        orderDate: new Date(),
+        orderDate: '2024-11-23T06:58:30.009Z',
         productIds: [2,3],
       },
       {
         order_id: "7600631539",
         customerName: "rembo",
-        orderDate: new Date(),
+        orderDate: '2024-11-24T06:58:30.009Z',
         productIds: [2,3],
       },
       {
