@@ -2,8 +2,20 @@ import { Request, Response } from "express";
 import Product from "../models/product.model";
 
 export const getProducts = async (req: Request, res: Response) => {
-  const products = await Product.findAll();
-  res.json(products);
+  try {
+    const products = await Product.findAll();
+
+    res.status(200).json({
+      status_code: 200,
+      message: products.length ? "Products retrieved successfully" : "No products found",
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status_code: 500,
+      message: "Internal server error",
+    });
+  }
 };
 
 export const createProduct = async(req: Request, res: Response) => {

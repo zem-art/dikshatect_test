@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import sequelize from "./database/migrations";
+import sequelize from "./database/config";
 import productRoutes from "./routes/product.routes";
 import orderRoutes from "./routes/order.routes";
 import { seedDatabase } from "./database/seeders";

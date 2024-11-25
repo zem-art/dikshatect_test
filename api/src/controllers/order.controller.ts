@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Order from "../models/order.model";
 import generateRandomString from "../utils/string.utils";
 import orderProduct from "../models/order_products.model";
-import sequelize from "../database/migrations";
+import sequelize from "../database/config";
 import Product from "../models/product.model";
 
 export const getOrders = async (req: Request, res: Response) => {
@@ -164,6 +164,10 @@ export const deleteOrder = async (req: Request, res: Response) => {
       return;
     }
 
+    const deletedOrderProducts = await orderProduct.destroy({
+      where: { order_id },
+    });
+
     const deletedOrder = await Order.destroy({
       where: { order_id },
     });
@@ -177,24 +181,50 @@ export const deleteOrder = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      status_code : 200,
-      message: 'successfully delete orders',
-      data: {},
+      status_code: 200,
+      message: "Successfully deleted order and its related products",
+      data: {
+        deletedOrderProducts,
+        deletedOrder,
+      },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({
+      status_code: 500,
+      message: "Internal server error",
+    });
   }
-}
+};
 
 export const updateOrderById = async (req: Request, res: Response) => {
   try {
-    const { order_id, id } = req.query;
+    const { order_id } = req.query;
+    const { customerName, product } = req.body;
+
+    const updatedOrderProduct = await orderProduct.update(
+      {
+        quantity : product.quantity
+      },
+      {
+        where: { id : product.id, order_id } 
+      }
+    );
+
+    if (updatedOrderProduct[0] === 0) {
+      res.status(404).json({
+        status_code: 404,
+        message: "OrderProduct not found",
+      });
+      return;
+    }
 
     res.status(200).json({
       status_code : 200,
-      message: 'successfully delete orders',
-      data: {},
+      message: 'successfully update product in orders',
+      data: {
+        updatedOrderProduct: updatedOrderProduct[0],
+      },
     });
   } catch (error) {
     console.error(error);

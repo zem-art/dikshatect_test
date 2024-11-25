@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../database/migrations";
+import sequelize from "../database/config";
 import OrderProduct from "./order_products.model";
 
 class Product extends Model {

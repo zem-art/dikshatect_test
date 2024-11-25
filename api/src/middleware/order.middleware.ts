@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { body, query, validationResult } from "express-validator";
 
 export const validateCreateOrder = [
   body("customerName").notEmpty().withMessage("Customer name is required"),
@@ -19,3 +19,10 @@ export const validateCreateOrder = [
     next();
   },
 ];
+
+export const validateUpdateOrder = [
+  query("order_id").notEmpty().withMessage('order_id is required'),
+  body("id").notEmpty().withMessage('id of order_product is required'),
+  body("product.id").isInt().withMessage("Sorry, id cannot be empty"),
+  body("product.quantity").isInt().isInt({ gt: 0 }).withMessage("product must have quantity greater than 0"),
+]
