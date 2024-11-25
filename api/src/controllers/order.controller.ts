@@ -11,7 +11,14 @@ export const getOrders = async (req: Request, res: Response) => {
   const where: any = {};
 
   if (customerName) where.customerName = { [Op.like]: `%${customerName}%` };
-  if (orderDate) where.orderDate = new Date(orderDate as string);
+  if (orderDate) {
+    const startDate = new Date(`${orderDate}T00:00:00.000Z`);
+    const endDate = new Date(`${orderDate}T23:59:59.999Z`);
+
+    where.orderDate = {
+      [Op.between]: [startDate, endDate],
+    };
+  }
   
   const offset = (Number(page) - 1) * Number(limit);
 
