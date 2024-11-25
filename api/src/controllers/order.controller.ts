@@ -151,3 +151,53 @@ export const getOrder = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    const { order_id } = req.query;
+
+    if (!order_id) {
+      res.status(400).json({
+        status_code: 400,
+        message: "order_id is required",
+      });
+      return;
+    }
+
+    const deletedOrder = await Order.destroy({
+      where: { order_id },
+    });
+
+    if (!deletedOrder) {
+      res.status(404).json({
+        status_code: 404,
+        message: "Order not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      status_code : 200,
+      message: 'successfully delete orders',
+      data: {},
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export const updateOrderById = async (req: Request, res: Response) => {
+  try {
+    const { order_id, id } = req.query;
+
+    res.status(200).json({
+      status_code : 200,
+      message: 'successfully delete orders',
+      data: {},
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}

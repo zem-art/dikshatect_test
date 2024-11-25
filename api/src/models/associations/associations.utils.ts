@@ -1,5 +1,3 @@
-// associations.ts (Create a new file for associations)
-
 import Order from "../order.model";
 import OrderProduct from "../order_products.model";
 
