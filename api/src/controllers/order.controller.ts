@@ -205,10 +205,10 @@ export const deleteOrder = async (req: Request, res: Response) => {
   }
 };
 
-export const updateOrderById = async (req: Request, res: Response) => {
+export const updateOrderByOrderId = async (req: Request, res: Response) => {
   try {
     const { order_id } = req.query;
-    const { customerName, product } = req.body;
+    const { product } = req.body;
 
     const updatedOrderProduct = await orderProduct.update(
       {
